@@ -1,0 +1,1128 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Музыкальный Гид — живой поиск в Apple Music</title>
+    <link rel="icon" type="image/png" href="logo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background: radial-gradient(circle at 20% 30%, #fff5f0 0%, #f0f3ff 100%);
+            color: #1a1b2f;
+            line-height: 1.5;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 0 30px;
+        }
+
+        /* ========== ЗВУКОВЫЕ ВОЛНЫ ========== */
+        .sound-waves {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.3;
+        }
+
+        .wave {
+            position: absolute;
+            background: linear-gradient(90deg, transparent, #FF6B6B, #4ECDC4, transparent);
+            height: 3px;
+            width: 100%;
+            border-radius: 3px;
+            animation: wave 8s infinite linear;
+        }
+
+        .wave-1 { top: 20%; animation-duration: 8s; opacity: 0.5; }
+        .wave-2 { top: 40%; animation-duration: 12s; opacity: 0.3; width: 80%; right: 0; }
+        .wave-3 { top: 60%; animation-duration: 10s; opacity: 0.4; width: 70%; }
+        .wave-4 { top: 80%; animation-duration: 14s; opacity: 0.2; width: 90%; right: 0; }
+        .wave-5 { top: 30%; animation-duration: 9s; opacity: 0.3; width: 60%; }
+        .wave-6 { top: 70%; animation-duration: 11s; opacity: 0.4; width: 85%; }
+
+        @keyframes wave {
+            0% { transform: translateX(-100%) scaleX(0.5); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translateX(100%) scaleX(1.5); opacity: 0; }
+        }
+
+        /* ========== ХЕДЕР ========== */
+        .header {
+            padding: 30px 0;
+            position: relative;
+            z-index: 10;
+            transition: all 0.4s;
+        }
+
+        .header.scrolled {
+            transform: translateY(-100%);
+        }
+
+        .header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(145deg, #FF6B6B, #4ECDC4);
+            border-radius: 18px;
+            transform: rotate(10deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 28px;
+            box-shadow: 0 15px 25px -8px rgba(255,107,107,0.4);
+            transition: 0.3s;
+        }
+
+        .logo-icon:hover {
+            transform: rotate(15deg) scale(1.05);
+        }
+
+        .logo-text {
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #FF6B6B, #4ECDC4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.5px;
+        }
+
+        /* ========== КНОПКИ ========== */
+        .btn {
+            display: inline-block;
+            padding: 14px 32px;
+            border-radius: 16px;
+            font-weight: 600;
+            font-size: 16px;
+            text-decoration: none;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: none;
+            cursor: pointer;
+            letter-spacing: 0.3px;
+        }
+
+        .btn-primary {
+            background: #FF6B6B;
+            color: white;
+            box-shadow: 0 10px 20px -5px rgba(255,107,107,0.5);
+        }
+
+        .btn-primary:hover {
+            background: #ff5252;
+            transform: scale(1.05) translateY(-3px);
+            box-shadow: 0 20px 25px -5px rgba(255,107,107,0.6);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #1a1b2f;
+            border: 2px solid #FF6B6B;
+        }
+
+        .btn-secondary:hover {
+            background: #FF6B6B;
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 20px 25px -5px rgba(255,107,107,0.4);
+        }
+
+        .btn-large {
+            padding: 18px 45px;
+            font-size: 18px;
+        }
+
+        /* ========== ГЕРОЙ ========== */
+        .hero {
+            padding: 60px 0 100px;
+            position: relative;
+            z-index: 5;
+        }
+
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .hero h1 {
+            font-size: 68px;
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 25px;
+            letter-spacing: -2px;
+        }
+
+        .hero h1 span {
+            background: linear-gradient(135deg, #FF6B6B, #4ECDC4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+        }
+
+        .hero p {
+            font-size: 20px;
+            color: #2d3a4f;
+            margin-bottom: 35px;
+            max-width: 90%;
+            opacity: 0.8;
+        }
+
+        /* ========== МОК-АП ========== */
+        .mockup-wrapper {
+            position: relative;
+        }
+
+        .mockup {
+            background: white;
+            border-radius: 40px;
+            padding: 15px;
+            box-shadow: 
+                0 50px 70px -20px rgba(255,107,107,0.4),
+                inset 0 -3px 0 rgba(0,0,0,0.05);
+            transform: rotate(3deg) perspective(1000px) rotateY(-8deg);
+            transition: all 0.5s ease;
+            position: relative;
+            z-index: 2;
+        }
+
+        .mockup:hover {
+            transform: rotate(0deg) perspective(1000px) rotateY(0deg) translateY(-15px);
+        }
+
+        .mockup img {
+            width: 100%;
+            height: auto;
+            border-radius: 30px;
+            display: block;
+            background: #f0f0f0;
+        }
+
+        .mockup::before {
+            content: '🎵';
+            position: absolute;
+            top: -20px;
+            left: -20px;
+            font-size: 40px;
+            background: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        /* ========== СЕКЦИИ ========== */
+        section {
+            position: relative;
+            z-index: 5;
+            padding: 90px 0;
+        }
+
+        .section-title {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            letter-spacing: -1px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 80px;
+            height: 5px;
+            background: linear-gradient(to right, #FF6B6B, #4ECDC4);
+            border-radius: 5px;
+        }
+
+        .section-subtitle {
+            font-size: 20px;
+            color: #4a5b6f;
+            max-width: 600px;
+            margin-bottom: 60px;
+            opacity: 0.8;
+        }
+
+        /* ========== КАРТОЧКИ ========== */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 30px;
+            perspective: 1000px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 30px;
+            padding: 40px 25px;
+            box-shadow: 0 30px 40px -20px rgba(0,0,0,0.15);
+            border: 1px solid rgba(255,107,107,0.1);
+            transform: rotateY(0deg) translateY(0);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(to right, #FF6B6B, #4ECDC4);
+        }
+
+        .card:hover {
+            transform: rotateY(5deg) translateY(-15px) translateX(5px);
+            box-shadow: 30px 30px 40px -20px rgba(255,107,107,0.3);
+            background: white;
+        }
+
+        .card-icon {
+            font-size: 52px;
+            margin-bottom: 25px;
+            transform: rotate(-5deg);
+            transition: 0.3s;
+        }
+
+        .card:hover .card-icon {
+            transform: rotate(0deg) scale(1.1);
+        }
+
+        .card h3 {
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+
+        .card p {
+            color: #4a5b6f;
+            font-size: 16px;
+        }
+
+        /* ========== ЭТАПЫ ========== */
+        .steps-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .step-item {
+            background: white;
+            border-radius: 30px;
+            padding: 35px;
+            box-shadow: 0 30px 40px -20px rgba(0,0,0,0.1);
+            border: 1px solid rgba(78,205,196,0.2);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .step-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle, #FF6B6B20, transparent);
+            border-radius: 50%;
+            transform: translate(30px, -30px);
+        }
+
+        .step-item:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 50px 50px -20px #FF6B6B40;
+        }
+
+        .step-number {
+            font-size: 48px;
+            font-weight: 700;
+            color: #FF6B6B;
+            opacity: 0.3;
+            margin-bottom: 20px;
+        }
+
+        .step-item h4 {
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+
+        /* ========== ДЕТАЛЬНЫЕ ФУНКЦИИ ========== */
+        .feature-block {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+            margin-bottom: 120px;
+            background: white;
+            border-radius: 60px;
+            padding: 60px;
+            box-shadow: 0 40px 60px -30px rgba(255,107,107,0.2);
+        }
+
+        .feature-block:last-child {
+            margin-bottom: 0;
+        }
+
+        .feature-block.reverse {
+            direction: rtl;
+        }
+
+        .feature-block.reverse .feature-text {
+            direction: ltr;
+        }
+
+        .feature-text h3 {
+            font-size: 38px;
+            margin-bottom: 30px;
+            line-height: 1.2;
+        }
+
+        .feature-list {
+            list-style: none;
+        }
+
+        .feature-list li {
+            margin-bottom: 20px;
+            padding-left: 35px;
+            position: relative;
+            font-size: 18px;
+        }
+
+        .feature-list li::before {
+            content: '▶';
+            color: #4ECDC4;
+            position: absolute;
+            left: 0;
+            font-size: 16px;
+            transition: 0.2s;
+        }
+
+        .feature-list li:hover::before {
+            color: #FF6B6B;
+            transform: translateX(3px);
+        }
+
+        .feature-mockup {
+            background: linear-gradient(145deg, #fafafa, #ffffff);
+            border-radius: 40px;
+            padding: 20px;
+            box-shadow: 0 30px 40px -20px #FF6B6B60;
+            transform: rotate(-2deg);
+            transition: 0.3s;
+        }
+
+        .feature-mockup:hover {
+            transform: rotate(0deg) scale(1.02);
+        }
+
+        .feature-mockup img {
+            width: 100%;
+            border-radius: 30px;
+            background: #e0e0e0;
+            height: auto;
+        }
+
+        /* ========== ТАРИФЫ ========== */
+        .pricing-grid {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+            margin-top: 50px;
+        }
+
+        .pricing-card {
+            background: white;
+            border-radius: 50px;
+            padding: 50px 40px;
+            width: 320px;
+            box-shadow: 0 40px 60px -30px rgba(0,0,0,0.2);
+            border: 1px solid rgba(78,205,196,0.2);
+            transition: all 0.4s;
+            position: relative;
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-15px) scale(1.02);
+            box-shadow: 0 60px 70px -30px #FF6B6B;
+        }
+
+        .pricing-card.popular {
+            border: 2px solid #FF6B6B;
+            transform: scale(1.05);
+        }
+
+        .pricing-card.popular:hover {
+            transform: scale(1.05) translateY(-15px);
+        }
+
+        .badge {
+            position: absolute;
+            top: -15px;
+            left: 40px;
+            background: linear-gradient(135deg, #FF6B6B, #4ECDC4);
+            color: white;
+            padding: 8px 25px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 14px;
+            box-shadow: 0 10px 15px -5px #FF6B6B;
+        }
+
+        .pricing-name {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .pricing-price {
+            font-size: 64px;
+            font-weight: 700;
+            margin-bottom: 30px;
+            color: #FF6B6B;
+        }
+
+        .pricing-price span {
+            font-size: 18px;
+            color: #7f8c9f;
+            font-weight: 400;
+        }
+
+        .pricing-features {
+            list-style: none;
+            margin-bottom: 35px;
+        }
+
+        .pricing-features li {
+            margin-bottom: 15px;
+            padding-left: 28px;
+            position: relative;
+        }
+
+        .pricing-features li::before {
+            content: '✓';
+            color: #4ECDC4;
+            font-weight: 700;
+            position: absolute;
+            left: 0;
+            font-size: 18px;
+        }
+
+        /* ========== ФУТЕР ========== */
+        .footer {
+            background: #1a1b2f;
+            color: white;
+            padding: 70px 0;
+            position: relative;
+            z-index: 10;
+        }
+
+        .footer .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .footer a {
+            color: #4ECDC4;
+            text-decoration: none;
+            transition: 0.2s;
+        }
+
+        .footer a:hover {
+            color: #FF6B6B;
+            text-decoration: none;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 30px;
+        }
+
+        /* ========== АНИМАЦИИ ПОЯВЛЕНИЯ ========== */
+        .fade-up {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.8s, transform 0.8s;
+        }
+
+        .fade-left {
+            opacity: 0;
+            transform: translateX(-60px);
+            transition: opacity 0.8s, transform 0.8s;
+        }
+
+        .fade-right {
+            opacity: 0;
+            transform: translateX(60px);
+            transition: opacity 0.8s, transform 0.8s;
+        }
+
+        .fade-up.active, .fade-left.active, .fade-right.active {
+            opacity: 1;
+            transform: translate(0);
+        }
+
+        /* ========== АДАПТАЦИЯ ========== */
+        @media (max-width: 1100px) {
+            .hero-grid { grid-template-columns: 1fr; }
+            .cards-grid { grid-template-columns: repeat(2, 1fr); }
+            .steps-container { grid-template-columns: 1fr; }
+            .feature-block { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 700px) {
+            .cards-grid { grid-template-columns: 1fr; }
+            .hero h1 { font-size: 48px; }
+            .footer .container { flex-direction: column; gap: 30px; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Звуковые волны -->
+    <div class="sound-waves">
+        <div class="wave wave-1"></div>
+        <div class="wave wave-2"></div>
+        <div class="wave wave-3"></div>
+        <div class="wave wave-4"></div>
+        <div class="wave wave-5"></div>
+        <div class="wave wave-6"></div>
+    </div>
+
+    <header class="header" id="header">
+        <div class="container">
+            <div class="logo">
+                <div class="logo-icon">
+                    <img src="logo.png" alt="Музыкальный Гид" style="width: 100%; height: 100%; object-fit: cover; border-radius: 18px;">
+                </div>
+                <span class="logo-text">Музыкальный Гид</span>
+            </div>
+            <a href="https://t.me/ApiMusicGuideBot" class="btn btn-primary" target="_blank">🎵 Открыть бота</a>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <div class="hero-grid">
+                <div class="fade-left">
+                    <h1>Музыка, которая <span>чувствует</span> тебя</h1>
+                    <p>Нейросеть GigaChat анализирует твой вкус и находит треки, которые идеально подходят под настроение, жанр и любимых артистов. Прямо в Telegram.</p>
+                    <div class="hero-buttons">
+                        <a href="https://t.me/ApiMusicGuideBot" class="btn btn-primary btn-large" target="_blank">🎯 Найти музыку</a>
+                        <a href="#how" class="btn btn-secondary btn-large">Как работает</a>
+                    </div>
+                </div>
+                <div class="mockup-wrapper fade-right">
+                    <div class="mockup">
+                        <img src="снимок1.png" alt="Интерфейс бота">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="features">
+        <div class="container">
+            <h2 class="section-title fade-up">Почему нас выбирают</h2>
+            <p class="section-subtitle fade-up">Четыре причины, по которым нам можно доверять</p>
+            
+            <div class="cards-grid">
+                <div class="card fade-up">
+                    <div class="card-icon">🧠</div>
+                    <h3>ИИ GigaChat</h3>
+                    <p>Нейросеть от Сбера, обученная понимать музыку глубже, чем обычные алгоритмы.</p>
+                </div>
+                <div class="card fade-up">
+                    <div class="card-icon">⚡</div>
+                    <h3>Мгновенно</h3>
+                    <p>Никаких ожиданий. Секунда — и у вас готовый плейлист под ваше настроение.</p>
+                </div>
+                <div class="card fade-up">
+                    <div class="card-icon">🎯</div>
+                    <h3>Точность ~85%</h3>
+                    <p>Пользователи подтверждают — мы попадаем в настроение почти всегда.</p>
+                </div>
+                <div class="card fade-up">
+                    <div class="card-icon">💾</div>
+                    <h3>Избранное</h3>
+                    <p>Сохраняйте целые подборки и возвращайтесь к ним в любой момент.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="how">
+        <div class="container">
+            <h2 class="section-title fade-up">Три шага до идеального плейлиста</h2>
+            <p class="section-subtitle fade-up">Проще, чем заказать пиццу</p>
+            
+            <div class="steps-container">
+                <div class="step-item fade-up">
+                    <div class="step-number">01</div>
+                    <h4>Запусти бота</h4>
+                    <p>Нажми "Старт" в Telegram и выбери, что ищешь: похожих артистов, треки по жанру или топы.</p>
+                </div>
+                <div class="step-item fade-up">
+                    <div class="step-number">02</div>
+                    <h4>Расскажи о вкусах</h4>
+                    <p>Пройди быстрый опрос или просто напиши название любимой группы.</p>
+                </div>
+                <div class="step-item fade-up">
+                    <div class="step-number">03</div>
+                    <h4>Получай музыку</h4>
+                    <p>ИИ выдаст 5-10 треков с пояснением, почему они тебе подходят. Слушай и сохраняй!</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section style="padding: 40px 0 120px;">
+        <div class="container">
+            <div class="feature-block fade-left">
+                <div class="feature-text">
+                    <h3>🎵 Умный поиск любой сложности</h3>
+                    <ul class="feature-list">
+                        <li><strong>Похожие артисты</strong> — находи группы со схожим звучанием</li>
+                        <li><strong>Топ-треки</strong> — самые популярные песни любимых исполнителей</li>
+                        <li><strong>Поиск по жанру</strong> — открывай новую музыку в любимых стилях</li>
+                        <li><strong>Комбинированный поиск</strong> — жанр + настроение + эпоха</li>
+                    </ul>
+                </div>
+                <div class="feature-mockup">
+                    <img src="снимок2.png" alt="Поиск">
+                </div>
+            </div>
+
+            <div class="feature-block reverse fade-right">
+                <div class="feature-text">
+                    <h3>🤖 ИИ объясняет каждый трек</h3>
+                    <ul class="feature-list">
+                        <li><strong>Почему этот трек?</strong> — нейросеть пишет пояснение</li>
+                        <li><strong>Реальные треки</strong> — проверка через Apple Music</li>
+                        <li><strong>Ссылки на прослушивание</strong> — сразу в Apple Music</li>
+                        <li><strong>Персонализация</strong> — учитываем язык, страну, темп</li>
+                    </ul>
+                </div>
+                <div class="feature-mockup">
+                    <img src="снимок3.png" alt="ИИ объясняет">
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <section style="background: linear-gradient(145deg, #fff, #f5f5f5);">
+        <div class="container">
+            <h2 class="section-title fade-up">Честные тарифы</h2>
+            <p class="section-subtitle fade-up">5 бесплатных попыток для знакомства, а дальше выбирай сам</p>
+            
+            <div class="pricing-grid">
+                <div class="pricing-card fade-left">
+                    <div class="pricing-name">Старт</div>
+                    <div class="pricing-price">0 ₽</div>
+                    <ul class="pricing-features">
+                        <li>5 бесплатных попыток</li>
+                        <li>Полный функционал</li>
+                        <li>Без ограничений</li>
+                    </ul>
+                    <a href="https://t.me/ApiMusicGuideBot" class="btn btn-secondary" target="_blank">Попробовать</a>
+                </div>
+
+                <div class="pricing-card popular fade-up">
+                    <div class="badge">🔥 Хит</div>
+                    <div class="pricing-name">Стандарт</div>
+                    <div class="pricing-price">99 ₽</div>
+                    <ul class="pricing-features">
+                        <li>10 доп. попыток</li>
+                        <li>Все функции</li>
+                        <li>Мгновенно</li>
+                    </ul>
+                    <a href="https://t.me/ApiMusicGuideBot" class="btn btn-primary" target="_blank">Купить</a>
+                </div>
+
+                <div class="pricing-card fade-right">
+                    <div class="pricing-name">Премиум</div>
+                    <div class="pricing-price">199 ₽</div>
+                    <ul class="pricing-features">
+                        <li>Безлимитные попытки</li>
+                        <li>Приоритетная генерация</li>
+                        <li>30 дней безлимита</li>
+                    </ul>
+                    <a href="https://t.me/ApiMusicGuideBot" class="btn btn-secondary" target="_blank">Купить</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section style="padding: 100px 0; text-align: center;">
+        <div class="container">
+            <h2 class="section-title fade-up" style="text-align: center;">Готов найти свою музыку?</h2>
+            <a href="https://t.me/ApiMusicGuideBot" class="btn btn-primary btn-large fade-up" target="_blank">🎧 Открыть бота в Telegram</a>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-logo">
+                <div class="logo-icon" style="width: 40px; height: 40px; font-size: 22px;">🎵</div>
+                <span style="font-size: 22px; font-weight: 600;">Музыкальный Гид</span>
+            </div>
+            <div class="footer-links">
+                <a href="https://t.me/ApiMusicGuideBot" target="_blank">Telegram</a>
+            </div>
+            <div>© 2026 · Музыкальный ИИ</div>
+        </div>
+    </footer>
+
+    <!-- ========== ЧАТ-ВИДЖЕТ (ЖИВОЙ ПОИСК ЧЕРЕЗ APPLE MUSIC) ========== -->
+    <style>
+        .demo-chat-widget {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 1000;
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, sans-serif;
+        }
+
+        .chat-trigger {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(145deg, #FF6B6B, #4ECDC4);
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            transition: 0.2s;
+            font-size: 28px;
+        }
+        .chat-trigger:hover { transform: scale(1.05); }
+
+        .chat-window {
+            position: absolute;
+            bottom: 80px;
+            right: 0;
+            width: 380px;
+            height: 540px;
+            background: white;
+            border-radius: 28px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(20px);
+            transition: 0.2s;
+        }
+        .chat-window.open {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .chat-header {
+            background: #1a1b2f;
+            color: white;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .chat-header-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(145deg, #FF6B6B, #4ECDC4);
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+        .chat-header-title {
+            font-weight: 600;
+            flex: 1;
+        }
+        .chat-header-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 28px;
+            cursor: pointer;
+            opacity: 0.7;
+            line-height: 1;
+        }
+        .chat-header-close:hover { opacity: 1; }
+
+        .chat-messages {
+            flex: 1;
+            padding: 16px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            background: #f5f7fb;
+        }
+        .message {
+            max-width: 85%;
+            padding: 10px 14px;
+            border-radius: 18px;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+        .message-bot {
+            background: white;
+            border: 1px solid #e9eef3;
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+        }
+        .message-user {
+            background: #4ECDC4;
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+
+        .chat-input-area {
+            display: flex;
+            padding: 12px;
+            border-top: 1px solid #e9eef3;
+            background: white;
+            gap: 8px;
+        }
+        .chat-input {
+            flex: 1;
+            border: 1px solid #e0e4e8;
+            border-radius: 28px;
+            padding: 10px 16px;
+            font-size: 14px;
+            outline: none;
+            font-family: inherit;
+        }
+        .chat-input:focus { border-color: #4ECDC4; }
+        .chat-send {
+            background: #FF6B6B;
+            border: none;
+            border-radius: 28px;
+            padding: 0 20px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .chat-send:hover { background: #ff5252; }
+
+        .genre-hint {
+            font-size: 12px;
+            color: #555;
+            padding: 8px 12px;
+            background: #f5f7fb;
+            border-top: 1px solid #e9eef3;
+        }
+        .track-link {
+            color: #1a1b2f;
+            text-decoration: none;
+            border-bottom: 1px dashed #FF6B6B;
+        }
+        .track-link:hover { color: #FF6B6B; }
+    </style>
+
+    <div class="demo-chat-widget">
+        <div class="chat-trigger" id="chatTrigger">🎵</div>
+        <div class="chat-window" id="chatWindow">
+            <div class="chat-header">
+                <div class="chat-header-icon">🎧</div>
+                <div class="chat-header-title">Музыкальный Гид</div>
+                <button class="chat-header-close" id="chatClose">×</button>
+            </div>
+            <div class="chat-messages" id="chatMessages">
+                <div class="message message-bot">
+                    🎶 <strong>Живой поиск в Apple Music</strong><br><br>
+                    Напиши <strong>жанр</strong> (например: rock, pop, hip-hop)<br>
+                    или исполнителя, чтобы найти треки.
+                </div>
+            </div>
+            <div class="chat-input-area">
+                <input type="text" class="chat-input" id="chatInput" placeholder="Жанр или артист...">
+                <button class="chat-send" id="chatSend">→</button>
+            </div>
+            <div class="genre-hint">
+                🎸 Примеры: rock, pop, hip-hop, electronic, jazz, Мияги
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            const trigger = document.getElementById('chatTrigger');
+            const windowEl = document.getElementById('chatWindow');
+            const closeBtn = document.getElementById('chatClose');
+            const messagesDiv = document.getElementById('chatMessages');
+            const inputEl = document.getElementById('chatInput');
+            const sendBtn = document.getElementById('chatSend');
+
+            function openChat() { windowEl.classList.add('open'); }
+            function closeChat() { windowEl.classList.remove('open'); }
+            trigger.addEventListener('click', openChat);
+            closeBtn.addEventListener('click', closeChat);
+
+            function addMessage(text, isUser = false) {
+                const div = document.createElement('div');
+                div.className = `message ${isUser ? 'message-user' : 'message-bot'}`;
+                div.innerHTML = text;
+                messagesDiv.appendChild(div);
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            }
+
+            async function searchAppleMusic(query) {
+                const url = `https://itunes.apple.com/search?term=${encodeURIComponent(query)}&entity=song&limit=5&sort=popular`;
+                try {
+                    const response = await fetch(url);
+                    const data = await response.json();
+                    return data.results || [];
+                } catch (err) {
+                    console.error('Apple Music API error', err);
+                    return [];
+                }
+            }
+
+            function formatTracks(results, query) {
+                if (!results.length) {
+                    return `😕 По запросу «${query}» ничего не найдено.<br><br>Попробуй: rock, pop, hip-hop, electronic, jazz или имя артиста.`;
+                }
+                let reply = `🎧 <strong>Треки по запросу «${query}»:</strong><br><br>`;
+                results.forEach((track, idx) => {
+                    const artist = track.artistName || 'Неизвестный исполнитель';
+                    const title = track.trackName || 'Без названия';
+                    const trackUrl = track.trackViewUrl || '#';
+                    reply += `${idx+1}. <strong>${artist}</strong> — ${title}<br>`;
+                    if (trackUrl && trackUrl !== '#') {
+                        reply += `&nbsp;&nbsp;&nbsp;<a href="${trackUrl}" target="_blank" class="track-link">🎵 Слушать в Apple Music</a><br><br>`;
+                    } else {
+                        reply += `<br>`;
+                    }
+                });
+                reply += `<br>✨ <i>Это живой поиск через Apple Music, как в нашем телеграм-боте.</i>`;
+                return reply;
+            }
+
+            async function sendUserMessage() {
+                const query = inputEl.value.trim();
+                if (!query) return;
+
+                addMessage(query, true);
+                inputEl.value = '';
+
+                const waitMsg = '⏳ Ищем треки в Apple Music...';
+                addMessage(waitMsg, false);
+
+                const tracks = await searchAppleMusic(query);
+
+                const messages = messagesDiv.querySelectorAll('.message');
+                if (messages.length && messages[messages.length-1].innerText === waitMsg) {
+                    messages[messages.length-1].remove();
+                }
+
+                const reply = formatTracks(tracks, query);
+                addMessage(reply, false);
+            }
+
+            sendBtn.addEventListener('click', sendUserMessage);
+            inputEl.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') sendUserMessage();
+            });
+        })();
+    </script>
+    <!-- ========== КОНЕЦ ЧАТ-ВИДЖЕТА ========== -->
+
+    <script>
+        function revealElements() {
+            const elements = document.querySelectorAll('.fade-up, .fade-left, .fade-right');
+            const windowHeight = window.innerHeight;
+            elements.forEach(el => {
+                const elementTop = el.getBoundingClientRect().top;
+                const elementVisible = 150;
+                if (elementTop < windowHeight - elementVisible) {
+                    el.classList.add('active');
+                }
+            });
+        }
+
+        window.addEventListener('scroll', revealElements);
+        window.addEventListener('load', revealElements);
+
+        let lastScroll = 0;
+        const header = document.getElementById('header');
+        window.addEventListener('scroll', () => {
+            const currentScroll = window.pageYOffset;
+            if (currentScroll > lastScroll && currentScroll > 100) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+            lastScroll = currentScroll;
+        });
+
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
